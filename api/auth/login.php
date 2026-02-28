@@ -1,13 +1,12 @@
 <?php
-
-// CORS HEADERS (WAJIB untuk Ionic)
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
-
-// Wajib paling atas agar CORS header dikirim sebelum proses lain
-require_once "../helpers/response.php"; 
 require_once "../config/database.php";
+require_once "../helpers/response.php";
+
+// Handle OPTIONS (CORS preflight)
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
 
 // Ambil JSON input
 $data = json_decode(file_get_contents("php://input"), true);
@@ -19,8 +18,8 @@ if ($email === '' || $password === '') {
     jsonResponse(false, "Email and password required", null, 400);
 }
 
-// TAMBAHKAN 'password' di SELECT agar data password ikut dikirim ke frontend
-$sql = "SELECT id_user, nama, email, password, id_role 
+// Prepared Statement
+$sql = "SELECT id_user, nama, email, id_role 
         FROM user 
         WHERE email = ? AND password = ?";
 
@@ -40,7 +39,7 @@ if ($user['id_role'] != 1) {
     jsonResponse(false, "Access denied. Admin only.", null, 403);
 }
 
-// Sekarang $user sudah mengandung field 'password' yang bisa dibaca
+// Login sukses
 jsonResponse(true, "Login success", $user);
 
 mysqli_stmt_close($stmt);
