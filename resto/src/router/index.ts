@@ -9,6 +9,7 @@ import Role from '../views/Masterdata/Role.vue';
 import Pengalaman from '../views/Masterdata/Pengalaman.vue';
 import Pemesanan from '../views/Masterdata/Pemesanan.vue';
 import Kategori from '../views/Masterdata/Kategori.vue';
+import User from '../views/Masterdata/User.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -59,6 +60,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/kategori',
     name: 'Kategori',
     component: Kategori
+  },
+  {
+    path: '/user',
+    name: 'User',
+    component: User
   },
 ]
 

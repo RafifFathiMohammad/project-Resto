@@ -61,23 +61,28 @@ const login = async () => {
       }
     )
 
+    console.log("Response Server:", response.data); // Tambahkan ini untuk debug
+
     if (response.data.success) {
       const user = response.data.user
+      
+      // Simpan user ke localStorage
+      localStorage.setItem('user', JSON.stringify(user))
 
-      // ✅ CHECK ROLE
-      if (user.id_role === 1) {
-        localStorage.setItem('user', JSON.stringify(user))
+      // Sesuaikan pengecekan Role (di gambar Anda id_role bisa jadi string atau number)
+      if (user.id_role == 1 || user.role === 'Admin') { 
         router.push('/dashboard')
       } else {
         alert('Access denied. Admin only.')
       }
-
     } else {
-      alert(response.data.message)
+      alert(response.data.message || 'Login gagal')
     }
-  } catch (error) {
-    alert('Server error')
-    console.error(error)
+  } catch (error: any) {
+    // Tampilkan pesan error yang lebih spesifik
+    const errorMsg = error.response?.data?.message || 'Tidak dapat terhubung ke server (Cek CORS atau Port)'
+    alert('Error: ' + errorMsg)
+    console.error("Detail Error:", error)
   }
 }
 

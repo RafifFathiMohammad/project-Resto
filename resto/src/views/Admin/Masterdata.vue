@@ -28,6 +28,7 @@
       <ion-button @click="goPengalaman">Manage Pengalaman</ion-button>
       <ion-button @click="goPemesanan">Manage Pemesanan</ion-button>
       <ion-button @click="goKategori">Manage Kategori</ion-button>
+      <ion-button @click="goUser">Manage User</ion-button>
 
     </ion-content>
   </ion-page>
@@ -75,6 +76,9 @@ const goPemesanan = () => {
 }
 const goKategori = () => {
   router.push('/kategori')
+}
+const goUser = () => {
+  router.push('/user')
 }
 const logout = () => {
   // Implement logout logic here (e.g., clear auth tokens, redirect to login page)
