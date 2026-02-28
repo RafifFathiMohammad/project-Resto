@@ -10,6 +10,7 @@ import Pengalaman from '../views/Masterdata/Pengalaman.vue';
 import Pemesanan from '../views/Masterdata/Pemesanan.vue';
 import Kategori from '../views/Masterdata/Kategori.vue';
 import User from '../views/Masterdata/User.vue';
+import Meja from '../views/Masterdata/Meja.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -66,6 +67,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'User',
     component: User
   },
+  {
+    path: '/meja',
+    name: 'Meja',
+    component: Meja
+  }
 ]
 
 const router = createRouter({
