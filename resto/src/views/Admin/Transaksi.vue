@@ -68,7 +68,8 @@
 
         <ion-grid class="ion-padding-top">
           <ion-row class="table-header">
-            <ion-col size="2">Order #</ion-col> <ion-col size="3">Menu</ion-col>
+            <ion-col size="2">Order #</ion-col> 
+            <ion-col size="3">Menu</ion-col>
             <ion-col size="1.5">Qty</ion-col>
             <ion-col size="2.5">Subtotal</ion-col>
             <ion-col size="3">Aksi</ion-col>
@@ -143,6 +144,38 @@
           <ion-button expand="block" color="success" class="ion-margin-top" @click="submit_s">
             {{ isEdit_s ? 'Update Struk' : 'Cetak & Simpan Struk' }}
           </ion-button>
+          <ion-button v-if="isEdit_s" expand="block" fill="outline" color="medium" @click="resetForm_s">Batal</ion-button>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Daftar Riwayat Struk</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-grid>
+            <ion-row class="table-header">
+              <ion-col size="2">Order #</ion-col>
+              <ion-col size="2">Kasir</ion-col>
+              <ion-col size="3">Total</ion-col>
+              <ion-col size="2">Status</ion-col>
+              <ion-col size="3">Aksi</ion-col>
+            </ion-row>
+            <ion-row v-for="s in struks" :key="s.id_struk" class="table-row">
+              <ion-col size="2">#{{ s.id_pemesanan }}</ion-col>
+              <ion-col size="2">{{ s.pegawai }}</ion-col>
+              <ion-col size="3">Rp {{ formatNumber(s.total) }}</ion-col>
+              <ion-col size="2">
+                <ion-badge :color="s.status == 1 ? 'success' : 'warning'">
+                  {{ s.status == 1 ? 'Lunas' : 'Pending' }}
+                </ion-badge>
+              </ion-col>
+              <ion-col size="3">
+                <ion-button size="small" color="warning" @click="editStruk(s)">Edit</ion-button>
+                <ion-button size="small" color="danger" @click="removeStruk(s.id_struk)">Hapus</ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
         </ion-card-content>
       </ion-card>
 
@@ -156,11 +189,11 @@ import { useRouter } from 'vue-router'
 import { 
   IonPage, IonContent, IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
   IonCardTitle, IonCardContent, IonItem, IonInput, IonButton, IonSelect, 
-  IonSelectOption, IonLabel, IonHeader, IonToolbar, IonTitle, IonButtons
+  IonSelectOption, IonLabel, IonHeader, IonToolbar, IonTitle, IonButtons, IonBadge
 } from '@ionic/vue'
 
 // Import Services
-import { getstruk, createstruk, updatestruk } from '@/services/strukSrevice'
+import { getstruk, createstruk, updatestruk, deletestruk } from '@/services/strukSrevice'
 import { getPemesanans, createPemesanan, updatePemesanan } from '@/services/pemesananService'
 import { getMejas } from '@/services/mejaService'
 import { getUsers } from '@/services/userService' 
@@ -179,12 +212,14 @@ const payments = ref<any[]>([])
 const pengalamans = ref<any[]>([])
 const menus = ref<any[]>([])
 const details = ref<any[]>([])
+const struks = ref<any[]>([]) // List struk
 
-// Form State
+// Form State Pemesanan
 const catatan_p = ref('')
 const isEdit_p = ref(false)
 const editId_p = ref<number | null>(null)
 
+// Form State Detail
 const id_pemesanan_d = ref<number | null>(null)
 const id_menu = ref<number | null>(null)
 const jumlah = ref<number>(1)
@@ -193,6 +228,7 @@ const selectedHarga = ref(0)
 const isEdit_d = ref(false)
 const editId_d = ref<number | null>(null)
 
+// Form State Struk
 const id_pemesanan_s = ref<number | null>(null)
 const id_meja = ref<number | null>(null)
 const id_pengalaman = ref<number | null>(null)
@@ -203,9 +239,9 @@ const editId_s = ref<number | null>(null)
 
 const loadAllData = async () => {
   try {
-    const [resP, resM, resU, resPy, resE, resMnu, resDet] = await Promise.all([
+    const [resP, resM, resU, resPy, resE, resMnu, resDet, resS] = await Promise.all([
       getPemesanans(), getMejas(), getUsers(), 
-      getPayments(), getPengalamans(), getMenus(), getDetails()
+      getPayments(), getPengalamans(), getMenus(), getDetails(), getstruk()
     ])
     pemesanans.value = resP.data.data
     mejas.value = resM.data.data
@@ -214,11 +250,13 @@ const loadAllData = async () => {
     pengalamans.value = resE.data.data
     menus.value = resMnu.data.data
     details.value = resDet.data.data
+    struks.value = resS.data.data // Load data struk
   } catch (err) { console.error(err) }
 }
 
 onMounted(loadAllData)
 
+// LOGIKA PEMESANAN
 const submit_p = async () => {
   try {
     if (isEdit_p.value && editId_p.value) {
@@ -229,14 +267,13 @@ const submit_p = async () => {
     resetForm_p(); await loadAllData()
   } catch (e) { alert("Gagal Simpan Pesanan") }
 }
-
 const resetForm_p = () => { catatan_p.value = ''; isEdit_p.value = false; editId_p.value = null }
 
+// LOGIKA DETAIL
 const handleMenuChange = () => {
   const menu = menus.value.find(m => m.id_menu === id_menu.value)
   if (menu) { selectedHarga.value = menu.harga; calculateSubtotal() }
 }
-
 const calculateSubtotal = () => { subtotal.value = selectedHarga.value * (Number(jumlah.value) || 0) }
 
 const submit_d = async () => {
@@ -267,52 +304,61 @@ const editDetail = (u: any) => {
 }
 
 const removeDetail = async (id: number) => {
-  if (confirm("Hapus item ini?")) {
-    await deleteDetail(id); await loadAllData()
-  }
+  if (confirm("Hapus item ini?")) { await deleteDetail(id); await loadAllData() }
 }
+const resetForm_d = () => { id_menu.value = null; jumlah.value = 1; subtotal.value = 0; isEdit_d.value = false; editId_d.value = null }
 
-const resetForm_d = () => { id_menu.value = null; jumlah.value = 1; subtotal.value = 0; isEdit_d.value = false }
-
+// LOGIKA STRUK
 const isDineIn = computed(() => {
   const selected = pengalamans.value.find(e => e.id_pengalaman === id_pengalaman.value)
   return selected?.type?.toLowerCase().includes('dine in')
 })
 
 watch(id_pemesanan_s, (newId) => {
-  if (newId) {
+  if (newId && !isEdit_s.value) { // Kalkulasi total hanya jika tidak sedang mode edit struk
     const filtered = details.value.filter(d => (d.id_Pemesanaan == newId || d.id_pemesanan == newId))
     total_s.value = filtered.reduce((acc, curr) => acc + Number(curr.subtotal), 0)
   }
 })
 
-// PERBAIKAN LOGIKA SUBMIT STRUK
 const submit_s = async () => {
-  if (!id_pemesanan_s.value || !id_pengalaman.value) {
-    alert("Harap pilih ID Pemesanan dan Tipe Layanan"); return;
-  }
-
+  if (!id_pemesanan_s.value || !id_pengalaman.value) return alert("Harap lengkapi data struk")
   const payload = {
     id_struk: editId_s.value,
     id_meja: id_meja.value || null,
     id_pemesanan: id_pemesanan_s.value,
     id_pengalaman: id_pengalaman.value,
-    // Pastikan ID pegawai & payment ada di DB
     id_pegawai: users.value.length > 0 ? users.value[0].id_user : 1, 
     id_payment: payments.value.length > 0 ? payments.value[0].id_payment : 1,
     total: total_s.value,
     tanggal: new Date().toISOString().split('T')[0],
     status: status_s.value
   }
-
   try {
     isEdit_s.value ? await updatestruk(payload) : await createstruk(payload)
-    alert("Struk berhasil disimpan ke database!")
-    await loadAllData()
-  } catch (e) { 
-    console.error("Gagal simpan struk:", e)
-    alert("Gagal simpan struk. Cek koneksi atau data pegawai/pembayaran.")
-  }
+    alert("Berhasil simpan struk!"); resetForm_s(); await loadAllData()
+  } catch (e) { alert("Gagal simpan struk") }
+}
+
+// LOGIKA EDIT & HAPUS STRUK (TAMBAHAN)
+const editStruk = (s: any) => {
+  isEdit_s.value = true
+  editId_s.value = s.id_struk
+  id_pemesanan_s.value = s.id_pemesanan
+  id_pengalaman.value = s.id_pengalaman
+  id_meja.value = s.id_meja
+  total_s.value = s.total
+  status_s.value = s.status
+  window.scrollTo({ top: 500, behavior: 'smooth' }) // Scroll ke form pembayaran
+}
+
+const removeStruk = async (id: number) => {
+  if (confirm("Hapus struk ini?")) { await deletestruk(id); await loadAllData() }
+}
+
+const resetForm_s = () => {
+  isEdit_s.value = false; editId_s.value = null; id_pemesanan_s.value = null;
+  id_meja.value = null; id_pengalaman.value = null; total_s.value = 0; status_s.value = 0
 }
 
 const formatNumber = (num: any) => new Intl.NumberFormat('id-ID').format(num)
@@ -328,4 +374,5 @@ const goTransaksi = () => router.push('/transaksi')
 .table-header { font-weight: bold; border-bottom: 2px solid #ddd; background: #f4f4f4; padding: 10px 0; }
 .table-row { border-bottom: 1px solid #eee; font-size: 0.9rem; align-items: center; padding: 5px 0; }
 .nav-title { color: white; }
+ion-badge { font-size: 0.75rem; }
 </style>
