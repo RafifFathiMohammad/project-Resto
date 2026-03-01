@@ -33,6 +33,7 @@
       <ion-button @click="goMenu">Manage Menu</ion-button>
       <ion-button @click="goDetail">Manage Detail</ion-button>
       <ion-button @click="goUpdate">Manage Update Stok</ion-button>
+      <ion-button @click="goStruk">Manage Struk Pembayaran</ion-button>
 
     </ion-content>
   </ion-page>
@@ -96,6 +97,9 @@ const goUpdate = () => {
 }
 const goDetail = () => {
   router.push('/detail')
+}
+const goStruk = () => {
+  router.push('/struk')
 }
 const logout = () => {
   // Implement logout logic here (e.g., clear auth tokens, redirect to login page)

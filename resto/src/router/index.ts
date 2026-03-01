@@ -14,6 +14,7 @@ import Meja from '../views/Masterdata/Meja.vue';
 import Menu from '../views/Masterdata/Menu.vue';
 import Detail from '../views/Masterdata/Detail.vue';
 import Update from '../views/Masterdata/Update.vue';
+import Struk from '../views/Masterdata/Struk.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -89,6 +90,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/update',
     name: 'Update',
     component: Update
+  },
+  {
+    path: '/struk',
+    name: 'Struk',
+    component: Struk
   },
 ]
 
