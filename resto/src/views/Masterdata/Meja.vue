@@ -114,7 +114,7 @@
 import {
   IonPage, IonContent, IonGrid, IonRow, IonCol,
   IonCard, IonCardHeader, IonCardTitle, IonCardContent,
-  IonItem, IonInput, IonButton
+  IonItem, IonInput, IonButton, IonSelect, IonSelectOption
 } from '@ionic/vue'
 
 import { ref, onMounted } from 'vue'
@@ -138,7 +138,7 @@ const loadRoles = async () => {
 }
 
 const submit = async () => {
-  if (!meja.value || !jumlah_kursi.value || !ketersediaan.value) return
+  if (!meja.value || !jumlah_kursi.value || ketersediaan.value === null) return
 
   if (isEdit.value && editId.value !== null) {
     await updateMeja(editId.value, meja.value, jumlah_kursi.value, ketersediaan.value)
@@ -168,6 +168,7 @@ const resetForm = () => {
   ketersediaan.value = 1
   isEdit.value = false
   editId.value = null
+  window.location.reload()
 }
 
 const removeMeja = async (id: number) => {

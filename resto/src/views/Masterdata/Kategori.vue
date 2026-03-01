@@ -144,6 +144,7 @@ const resetForm = () => {
   kategori.value = ''
   isEdit.value = false
   editId.value = null
+  window.location.reload()
 }
 
 const removeKategori = async (id: number) => {

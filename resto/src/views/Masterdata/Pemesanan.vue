@@ -144,6 +144,7 @@ const resetForm = () => {
   catatan.value = ''
   isEdit.value = false
   editId.value = null
+  window.location.reload()
 }
 
 const removePemesanan = async (id: number) => {

@@ -16,7 +16,7 @@ $stmt = mysqli_prepare(
     $conn,
     "INSERT INTO meja (meja, jumlah_kursi, ketersediaan) VALUES (?, ?, ?)"
 );
-mysqli_stmt_bind_param($stmt, "ssi",   $meja, $jumlah_kursi, $ketersediaan);
+mysqli_stmt_bind_param($stmt, "sii",   $meja, $jumlah_kursi, $ketersediaan);
 mysqli_stmt_execute($stmt);
 
 jsonResponse(true, "Meja created");

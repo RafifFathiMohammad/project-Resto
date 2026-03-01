@@ -144,6 +144,7 @@ const resetForm = () => {
   pekerjaan.value = ''
   isEdit.value = false
   editId.value = null
+  window.location.reload()
 }
 
 const removeRole = async (id: number) => {

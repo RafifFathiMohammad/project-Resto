@@ -82,7 +82,8 @@
               <ion-col size="1">{{ index + 1 }}</ion-col>
               <ion-col size="2">{{ u.nama }}</ion-col>
               <ion-col size="2">{{ u.email }}</ion-col>
-              <ion-col size="2">{{ u.password }}</ion-col> <ion-col size="2">{{ u.role }}</ion-col>
+              <ion-col size="2">{{ u.password }}</ion-col> 
+              <ion-col size="2">{{ u.role }}</ion-col>
               <ion-col size="3">
                 <ion-button size="small" color="warning" @click="editUser(u)">
                   Edit
@@ -175,6 +176,7 @@ const resetForm = () => {
   id_role.value = null
   isEdit.value = false
   editId.value = null
+  window.location.reload()
 }
 
 const removeUser = async (id: number) => {

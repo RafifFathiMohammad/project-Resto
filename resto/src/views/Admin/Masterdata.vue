@@ -30,6 +30,9 @@
       <ion-button @click="goKategori">Manage Kategori</ion-button>
       <ion-button @click="goUser">Manage User</ion-button>
       <ion-button @click="goMeja">Manage Meja</ion-button>
+      <ion-button @click="goMenu">Manage Menu</ion-button>
+      <ion-button @click="goDetail">Manage Detail</ion-button>
+      <ion-button @click="goUpdate">Manage Update Stok</ion-button>
 
     </ion-content>
   </ion-page>
@@ -52,6 +55,7 @@ import {
   IonIcon
 } from '@ionic/vue'
 import { useRouter } from 'vue-router'
+
 
 const router = useRouter()
 const goHome = () => {
@@ -83,6 +87,15 @@ const goUser = () => {
 }
 const goMeja = () => {
   router.push('/meja')
+}
+const goMenu = () => {
+  router.push('/menu')
+}
+const goUpdate = () => {
+  router.push('/update')
+}
+const goDetail = () => {
+  router.push('/detail')
 }
 const logout = () => {
   // Implement logout logic here (e.g., clear auth tokens, redirect to login page)

@@ -144,6 +144,7 @@ const resetForm = () => {
   type.value = ''
   isEdit.value = false
   editId.value = null
+  window.location.reload()
 }
 
 const removePengalaman = async (id: number) => {

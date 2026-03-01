@@ -11,6 +11,9 @@ import Pemesanan from '../views/Masterdata/Pemesanan.vue';
 import Kategori from '../views/Masterdata/Kategori.vue';
 import User from '../views/Masterdata/User.vue';
 import Meja from '../views/Masterdata/Meja.vue';
+import Menu from '../views/Masterdata/Menu.vue';
+import Detail from '../views/Masterdata/Detail.vue';
+import Update from '../views/Masterdata/Update.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -71,7 +74,22 @@ const routes: Array<RouteRecordRaw> = [
     path: '/meja',
     name: 'Meja',
     component: Meja
-  }
+  },
+  {
+    path: '/menu',
+    name: 'Menu',
+    component: Menu
+  },
+  {
+    path: '/detail',
+    name: 'Detail',
+    component: Detail
+  },
+  {
+    path: '/update',
+    name: 'Update',
+    component: Update
+  },
 ]
 
 const router = createRouter({

@@ -16,7 +16,7 @@ $stmt = mysqli_prepare(
     $conn,
     "UPDATE meja SET meja=?, jumlah_kursi=?, ketersediaan=? WHERE id_meja=?"
 );
-mysqli_stmt_bind_param($stmt, "ssii", $meja, $jumlah_kursi, $ketersediaan, $id);
+mysqli_stmt_bind_param($stmt, "siii", $meja, $jumlah_kursi, $ketersediaan, $id);
 mysqli_stmt_execute($stmt);
 
 jsonResponse(true, "Meja updated");
